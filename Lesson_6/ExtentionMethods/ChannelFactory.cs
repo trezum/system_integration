@@ -8,6 +8,7 @@ namespace Utility
         private static IConnection connection;
         public static IModel CreateDirectChannel(string name)
         {
+            // TODO: Save channels in dictonary and return them if they exist, but only if close event is triggered?
             ConnectionFactory factory = new ConnectionFactory();
             factory.Uri = new Uri("amqp://guest:guest@localhost:5672/");
 
@@ -15,14 +16,12 @@ namespace Utility
             if (connection == null || !connection.IsOpen)
             {
                 connection = factory.CreateConnection();
-                Console.WriteLine("Connected");
-                Console.WriteLine();
+                Console.WriteLine("Connected.");
             }
 
             // Channels should be reused when possible.
             IModel channel = connection.CreateModel();
-            Console.WriteLine("Direct channel "+ name + " open");
-            Console.WriteLine();
+            Console.WriteLine("Direct channel "+ name + " open.");
 
             var exchangeName = name + "Exchange";
             var queueName = name + "Queue";
