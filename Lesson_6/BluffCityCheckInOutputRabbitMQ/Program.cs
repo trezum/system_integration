@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Xml.Linq;
 using Utility;
-using RabbitMQ.Client;
 
 namespace BluffCityCheckInOutputRabbitMQ
 {
@@ -9,18 +7,15 @@ namespace BluffCityCheckInOutputRabbitMQ
     {
         static void Main(string[] args)
         {
-            string checkinout = "CheckInOut";
-            var channel = ChannelFactory.CreateDirectChannel(checkinout);
+            AppDomain.CurrentDomain.ProcessExit += AppDomain_ProcessExit;
+            new CheckInOutput().Run();
+        }
 
-            XDocument CheckInFile = XDocument.Load(@"CheckedInPassenger.xml");
-            var bytes = CheckInFile.ToByteArray();
-
-            while (true)
-            {                
-                channel.BasicPublish(checkinout + "Exchange", checkinout + "RoutingKey", null, bytes);
-                Console.WriteLine("Message sent on the channel CheckInOut.");
-                Console.ReadKey();
-            }
+        private static void AppDomain_ProcessExit(object sender, EventArgs e)
+        {
+            ChannelFactory.Dispose();
+            Console.WriteLine("The process has exited, press any key to close this window.");
+            Console.ReadKey();
         }
     }
 }
