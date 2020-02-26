@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BluffCityCheckInOutputRabbitMQ", "BluffCityCheckInOutputRabbitMQ\BluffCityCheckInOutputRabbitMQ.csproj", "{C84C0358-856B-4D7B-8383-24005D0FBCDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtentionMethods", "ExtentionMethods\ExtentionMethods.csproj", "{7A043495-F973-45F9-B3A1-F9AFD3B01040}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utility", "ExtentionMethods\Utility.csproj", "{7A043495-F973-45F9-B3A1-F9AFD3B01040}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Splitter", "Splitter\Splitter.csproj", "{E80DFB57-01FA-4863-A974-4589201FF72D}"
 EndProject

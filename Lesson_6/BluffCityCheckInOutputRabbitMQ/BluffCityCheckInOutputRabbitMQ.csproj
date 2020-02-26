@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ExtentionMethods\ExtentionMethods.csproj" />
+    <ProjectReference Include="..\ExtentionMethods\Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>

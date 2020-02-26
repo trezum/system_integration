@@ -3,7 +3,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace ExtentionMethods
+namespace Utility
 {
     public static class XDocumentExtensions
     {
