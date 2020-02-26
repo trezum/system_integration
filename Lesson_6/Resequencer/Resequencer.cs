@@ -19,7 +19,7 @@ namespace Resequencer
             _passengerDocuments = new Dictionary<Guid, XDocument>();
         }
 
-        public void Run()
+        internal void Run()
         {
             string luggageChannelName = "Luggage";
             var luggageChannel = ChannelFactory.CreateDirectChannel(luggageChannelName);
@@ -81,14 +81,18 @@ namespace Resequencer
             string sequencedCheckIn = "SequencedCheckIn";
             IModel channel = ChannelFactory.CreateDirectChannel(sequencedCheckIn);
             channel.BasicPublish(sequencedCheckIn + "Exchange", sequencedCheckIn + "RoutingKey", null, _passengerDocuments[correlationId].ToByteArray());
-            Console.WriteLine("Sent passenger message for CorrelationId" + correlationId);
+            Console.WriteLine("Sent passenger message for CorrelationId " + correlationId);
 
             var luggageColl = _luggageDocuments[correlationId].OrderBy(d => d.Root.Element("Identification"));
             foreach (var luggageDocument in luggageColl)
             {                
                 channel.BasicPublish(sequencedCheckIn + "Exchange", sequencedCheckIn + "RoutingKey", null, luggageDocument.ToByteArray());
-                Console.WriteLine("Sent luggage message for CorrelationId" + correlationId);
+                Console.WriteLine("Sent luggage message for CorrelationId " + correlationId);
             }
+
+            _luggageDocuments.Remove(correlationId);
+            _passengerDocuments.Remove(correlationId);
+
             Console.WriteLine("Press any key to continue.");
             Console.ReadKey();
         }

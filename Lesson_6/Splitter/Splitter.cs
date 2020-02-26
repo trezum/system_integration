@@ -10,7 +10,7 @@ namespace Splitter
 {
     public class Splitter
     {
-        public void Run()
+        internal void Run()
         {
             string checkinout = "CheckInOut";
             IModel channel = ChannelFactory.CreateDirectChannel(checkinout);

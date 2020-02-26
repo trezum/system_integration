@@ -7,7 +7,7 @@ namespace BluffCityCheckInOutputRabbitMQ
 {
     public class CheckInOutput
     {
-        public void Run() 
+        internal void Run() 
         {
             string checkinout = "CheckInOut";
             var channel = ChannelFactory.CreateDirectChannel(checkinout);
