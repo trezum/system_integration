@@ -16,6 +16,7 @@ namespace Splitter
             IModel channel = ChannelFactory.CreateDirectChannel(checkinout);
 
             var consumer = new EventingBasicConsumer(channel);
+
             consumer.Received += (ch, ea) =>
             {
                 var checkInXDocument = ea.Body.ToXDocument();
@@ -23,9 +24,9 @@ namespace Splitter
                 var checkInCorrelationId = Guid.NewGuid();
 
                 var personXDocument = SplitPassengerFromCheckIn(checkInXDocument, checkInCorrelationId);
-                string passengerChannelName = "Passenger";
-                var passengerChannel = ChannelFactory.CreateDirectChannel(passengerChannelName);
-                passengerChannel.BasicPublish(passengerChannelName + "Exchange", passengerChannelName + "RoutingKey", null, personXDocument.ToByteArray());
+                string sequencedCheckIn = "SequencedCheckIn";
+                var passengerChannel = ChannelFactory.CreateDirectChannel(sequencedCheckIn);
+                passengerChannel.BasicPublish(sequencedCheckIn + "Exchange", sequencedCheckIn + "RoutingKey", null, personXDocument.ToByteArray());
                 Console.WriteLine("Passenger message sent with CorrelationId: " + checkInCorrelationId);
 
                 var luggageXDocuments = SplitLuggageFromCheckIn(checkInXDocument, checkInCorrelationId);
@@ -39,19 +40,24 @@ namespace Splitter
                 }
 
                 channel.BasicAck(ea.DeliveryTag, false);
-                Console.WriteLine("Press any key to continue.");
+                Console.WriteLine("Press any key to continue with the next message.");
+                Console.WriteLine();
                 Console.ReadKey();
             };
+
             string consumerTag = channel.BasicConsume(checkinout + "Queue", false, consumer);
         }
 
         private IEnumerable<XDocument> SplitLuggageFromCheckIn(XDocument checkInDocument, Guid checkInCorrelationId)
         {
             Console.WriteLine("Splitting luggage with CorrelationId " + checkInCorrelationId);
+            var totalLuggage = checkInDocument.Root.Elements().Count(e => e.Name == "Luggage");
+
             foreach (var luggageElement in checkInDocument.Root.Elements().Where(e => e.Name == "Luggage"))
             {
                 var luggageDocument = new XDocument(checkInDocument);
                 luggageDocument.Root.Name = "LuggageFlightDetailsInfoResponse";
+                luggageDocument.Root.Add(new XElement("TotalLuggage", totalLuggage));
                 luggageDocument.Root.Add(new XElement("CorrelationId", checkInCorrelationId));
                 luggageDocument.Root.Elements().Where(e => e.Name == "Luggage").Remove();
                 luggageDocument.Root.Add(luggageElement);
@@ -64,10 +70,9 @@ namespace Splitter
             Console.WriteLine("Splitting passenger with CorrelationId " + checkInCorrelationId);
 
             var passengerDocument = new XDocument(checkInDocument);
-            var totalLuggage = passengerDocument.Root.Elements().Count(e => e.Name == "Luggage");
+            var totalLuggage = checkInDocument.Root.Elements().Count(e => e.Name == "Luggage");
 
             passengerDocument.Root.Name = "PassengerFlightDetailsInfoResponse";
-            passengerDocument.Root.Add(new XElement("TotalLuggage", totalLuggage));
             passengerDocument.Root.Add(new XElement("CorrelationId", checkInCorrelationId));
             passengerDocument.Root.Elements().Where(e => e.Name == "Luggage").Remove();
 

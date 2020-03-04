@@ -14,8 +14,7 @@ namespace Splitter
         private static void AppDomain_ProcessExit(object sender, EventArgs e)
         {
             ChannelFactory.Dispose();
-            Console.WriteLine("The process has exited, press any key to close this window.");
-            Console.ReadKey();
+            Console.WriteLine("The process has exited.");
         }
     }
 }
